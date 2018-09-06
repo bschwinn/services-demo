@@ -1,7 +1,7 @@
 const execa = require('execa');
 const fs = require('fs');
 const {promisify} = require('util');
-const appConfig = require('./apps.json');
+const appConfig = require('./resources/apps.json');
 const writeFile = promisify(fs.writeFile);
 
 const local = async (port) => {

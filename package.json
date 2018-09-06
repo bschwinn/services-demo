@@ -10,9 +10,9 @@
     },
     "author": "openfin",
     "dependencies": {
-        "openfin-fdc3": "file:../fdc3-service/",
-        "openfin-layouts": "file:../layouts-service/",
-        "openfin-notifications": "file:../notifications-service/"
+        "openfin-fdc3": "0.0.5-alpha.10",
+        "openfin-layouts": "^0.9.1-alpha.94",
+        "openfin-notifications": "0.0.4-alpha.17"
     },
     "devDependencies": {
         "copy-webpack-plugin": "^4.5.1",

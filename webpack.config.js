@@ -4,7 +4,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = [
     Object.assign({}, 
         {
-            entry: path.resolve("main.js"),
+            entry: path.resolve("./resources/main.js"),
             output: {
                 path: path.resolve('./build'),
                 filename: 'main-bundle.js'
@@ -15,10 +15,10 @@ module.exports = [
             },
             plugins: [
                 new CopyWebpackPlugin([
-                    { from: '*.html' },
-                    { from: '*.css' },
-                    { from: 'apps.js' },
-                    { from: 'apps.json' }
+                    { from: './resources/*.html', flatten: true },
+                    { from: './resources/*.css', flatten: true },
+                    { from: './resources/apps.js', flatten: true },
+                    { from: './resources/apps.json', flatten: true }
                 ])
             ]
         }

@@ -1,7 +1,7 @@
 const execa = require('execa');
 const getStream = require('get-stream');
 const fetch = require('node-fetch');
-const appConfig = require('./apps.json');
+const appConfig = require('./resources/apps.json');
 
 const {lookupServiceUrl} = require('./utils');
 
