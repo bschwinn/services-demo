@@ -5,17 +5,18 @@
     "scripts": {
         "build": "webpack --mode development",
         "start": "npm run start:latest",
-        "start:local": "MODE=local node server.js",
-        "start:latest": "MODE=latest node server.js"
+        "start:local": "cross-env MODE=local node server.js",
+        "start:latest": "cross-env MODE=latest node server.js"
     },
     "author": "openfin",
     "dependencies": {
-        "openfin-fdc3": "0.0.5-alpha.10",
-        "openfin-layouts": "^0.9.1-alpha.94",
-        "openfin-notifications": "0.0.4-alpha.17"
+        "openfin-fdc3": "file:../fdc3-service/",
+        "openfin-layouts": "file:../layouts-service/",
+        "openfin-notifications": "file:../notifications-service/"
     },
     "devDependencies": {
         "copy-webpack-plugin": "^4.5.1",
+        "cross-env": "^5.2.0",
         "execa": "^0.10.0",
         "express": "^4.16.3",
         "get-stream": "^4.0.0",

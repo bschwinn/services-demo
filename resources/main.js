@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const dockBtn = document.getElementById('undockBtn');
     dockBtn.addEventListener('click', () => {
-        oflayouts.undock().then(() => logit('window undocked'));
+        oflayouts.undockWindow().then(() => logit('window undocked'));
     });
 
     new offdc3.IntentListener( (context) => {
