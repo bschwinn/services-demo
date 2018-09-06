@@ -62,7 +62,11 @@ const modifyManifest = async (port) => {
 
     for (let i in manifest.services ) {
         const service = manifest.services[i];
-        service.manifestUrl = `http://localhost:${port}/${service.name}/app.json`;
+        if (service.name == 'layouts') {
+            service.manifestUrl = `http://localhost:${port}/${service.name}/provider/app.json`;
+        } else {
+            service.manifestUrl = `http://localhost:${port}/${service.name}/app.json`;
+        }
     }
 
     await writeFile(manifestPath, JSON.stringify(manifest, null, 4));
