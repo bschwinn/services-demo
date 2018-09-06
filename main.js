@@ -2,7 +2,7 @@ import * as ofnotes from "openfin-notifications"
 import * as oflayouts from "openfin-layouts"
 import * as offdc3 from "openfin-fdc3"
 
-document.addEventListener("DOMContentLoaded", function (evt) {
+document.addEventListener("DOMContentLoaded", function () {
 
     const logs = document.getElementById('logger');
 

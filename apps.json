@@ -5,7 +5,10 @@
         "description": "Demo of Openfin Desktop Services",
         "url": "http://localhost:3011/apps.html",
         "uuid": "services-demo",
-        "autoShow": true
+        "autoShow": true,
+        "defaultHeight": 200,
+        "defaultWidth": 200,
+        "saveWindowState": false
     },
     "services": [
         {

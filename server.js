@@ -1,22 +1,40 @@
 const openfinLauncher = require('hadouken-js-adapter');
 const express = require('express');
-const fetch = require('node-fetch');
 const http = require('http');
 const path = require('path');
 const os = require('os');
-
 const {lookupServiceUrl} = require('./utils');
+const {update} = require('./update');
+const {local} = require('./local');
 
-var port = process.env.PORT || 3011;
+const port = process.env.PORT || 3011;
+const confPath  = path.resolve('build', 'apps.json');
 
-var app = express();
-
+const app = express();
 app.use(express.static('./build'));
+
+let mode = 'latest';
+if (process.env.MODE && process.env.MODE.length>0 && (process.env.MODE === 'latest' || process.env.MODE === 'local')) {
+    mode = process.env.MODE;
+    console.log(`running in mode ${mode}`);
+}
 
 http.createServer(app).listen(port, async function(){
     console.log('Express server listening on port ' + port);
 
-    const confPath  = path.resolve('build', 'apps.json');
+    try {
+        if (mode === 'local') {
+            await local(port);
+            app.use('/layouts', express.static('../layouts-service/build'));
+            app.use('/notifications', express.static('../notifications-service/build'));
+            app.use('/fdc3', express.static('../fdc3-service/build'));
+        } else {
+            await update(port);
+        }
+    } catch(e) {
+        console.error(`error running setup in ${mode} mode`, e);
+        process.exit(1);
+    }
 
     // on OS X we need to launch the provider manually (no RVM)
     if (os.platform() === 'darwin') {
@@ -40,23 +58,15 @@ http.createServer(app).listen(port, async function(){
 
 const launchService = async (service) => {
     if (service.manifestUrl) {
-        await launchServiceUrl(service.manifestUrl);
+        await openfinLauncher.launch({ manifestUrl: service.manifestUrl });
         console.log(`launching service: ${service.name} from manifestUrl: ${service.manifestUrl}`);
     } else {
         const sUrl = await lookupServiceUrl(service.name);
         if (sUrl.length > 0) {
-            await launchServiceUrl(sUrl);
+            await openfinLauncher.launch({ manifestUrl: sUrl });
             console.log(`launching service: ${service.name} from app directory url: ${sUrl}`);
         } else {
             console.log(`unable to launch service: ${service.name}, could not determine url.`);
         }
-    }
-};
-
-const launchServiceUrl = async (url) => {
-    try {
-        await openfinLauncher.launch({ manifestUrl: url });
-    } catch(e) {
-        console.error(e);
     }
 };

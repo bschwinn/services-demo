@@ -9,6 +9,7 @@ module.exports = [
                 path: path.resolve('./build'),
                 filename: 'main-bundle.js'
             },
+            devtool: 'source-map',
             resolve: {
                 extensions: ['.js']
             },
