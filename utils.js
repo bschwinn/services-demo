@@ -3,6 +3,7 @@ const fetch = require('node-fetch');
 var appDirHost = process.env.APPDIR_HOST || 'https://app-directory-staging.openfin.co'
 
 module.exports = {
+    defaultRuntimeVersion: "9.61.33.32",
     lookupServiceUrl : async (serviceName) => {
         if (appDirHost.length > 0) {
             const lookupUrl = `${appDirHost}/api/v1/apps/${serviceName}`;

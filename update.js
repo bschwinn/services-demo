@@ -5,42 +5,28 @@ const appConfig = require('./resources/apps.json');
 
 const {lookupServiceUrl} = require('./utils');
 
-const update = async (port) => {
-    try {
-        const npmCommand = {name: "npm", args: ['i', '--save', 'openfin-__SERVICE__@alpha']};
-        const gitCommand = {name: "git", args: ['ls-remote', 'https://github.com/HadoukenIO/__SERVICE__-service.git']};
+const npmCommand = {name: "npm", args: ['i', '--save', 'openfin-__SERVICE__@alpha']};
+const gitCommand = {name: "git", args: ['ls-remote', 'https://github.com/HadoukenIO/__SERVICE__-service.git']};
 
+const update = async (port) => {
+    // update each service listed in the manifest
+    try {
         for (let i in appConfig.services ) {
             const service = appConfig.services[i];
-
-            // fill out command arg template strings
-            const npmargs = Object.assign([], npmCommand.args);
-            npmargs[npmargs.length-1] = npmargs[npmargs.length-1].replace('__SERVICE__', service.name);
-            const gitargs = Object.assign([], gitCommand.args);
-            gitargs[gitargs.length-1] = gitargs[gitargs.length-1].replace('__SERVICE__', service.name);
-
-            // run the npm command and await the ouput stream to parse out what was installed
-            const npmOut = execa(npmCommand.name, npmargs).stdout;
-            const npmStream = await getStream(npmOut);
-            const npmMsg = processNPMOutput(npmStream.split('\n'));
-
-            // run the git command and await the ouput stream to parse out the git sha
-            const gitOut = execa(gitCommand.name, gitargs).stdout;
-            const gitStream = await getStream(gitOut);
-            const gitMsg = getDevelopSha(gitStream.split('\n'));
-
-            // find service's manifest url
+            // update to alpha pre-release
+            const npmMsg = await updateNPM(service);
+            // get SHA from github.com
+            const gitMsg = await getGitSHA(service);
+            // if no manifest url, resolve service name remotely
             const serviceUrl = service.manifestUrl;
             if (!serviceUrl) {
                 serviceUrl = await lookupServiceUrl(service.name);
             }
-
-            // get the startup_app.url
+            // given manifest url, get startup_app.url
             let appURL = '??';
             if (serviceUrl.length >0) {
                 appURL = await getServiceAppUrl(serviceUrl);
             }
-
             // a nice message to the user
             console.log(`\nService: ${service.name}`);
             console.log(`    prerelease: ${npmMsg}`);
@@ -51,6 +37,28 @@ const update = async (port) => {
     } catch(e) {
         console.error(e);
     }
+}
+
+const updateNPM = async (service) => {
+    const npmargs = Object.assign([], npmCommand.args);
+    npmargs[npmargs.length-1] = npmargs[npmargs.length-1].replace('__SERVICE__', service.name);
+
+    // run the npm command and await the ouput stream to parse out what was installed
+    const npmOut = execa(npmCommand.name, npmargs).stdout;
+    const npmStream = await getStream(npmOut);
+    const npmMsg = processNPMOutput(npmStream.split('\n'));
+    return npmMsg;
+}
+
+const getGitSHA = async (service) => {
+    const gitargs = Object.assign([], gitCommand.args);
+    gitargs[gitargs.length-1] = gitargs[gitargs.length-1].replace('__SERVICE__', service.name);
+
+    // run the git command and await the ouput stream to parse out the git sha
+    const gitOut = execa(gitCommand.name, gitargs).stdout;
+    const gitStream = await getStream(gitOut);
+    const gitMsg = getDevelopSha(gitStream.split('\n'));
+    return gitMsg;
 }
 
 const getServiceAppUrl = async(serviceUrl) => {

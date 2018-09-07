@@ -8,8 +8,7 @@ const URL = require('url').URL;
 const {lookupServiceUrl} = require('./utils');
 const {update} = require('./update');
 const {local} = require('./local');
-const {promisify} = require('util');
-const readFile = promisify(fs.readFile);
+const {defaultRuntimeVersion} = require('./utils');
 
 const port = process.env.PORT || 3011;
 const confPath  = path.resolve('build', 'apps.json');
@@ -102,6 +101,11 @@ const loadConfigFile = (serviceName) => {
         appUrl.host = `localhost:${port}`
         appUrl.pathname = `/${serviceName}${appUrl.pathname}`
         conf.startup_app.url = appUrl.href;
+        if (typeof process.env.RUNTIME_VERSION != 'undefined' && process.env.RUNTIME_VERSION != "" ) {
+            conf.runtime.version = process.env.RUNTIME_VERSION;
+        } else {
+            conf.runtime.version = defaultRuntimeVersion;
+        }
         return conf
     } catch(e) {
         return {};
